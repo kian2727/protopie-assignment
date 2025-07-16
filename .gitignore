@@ -24,3 +24,5 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+/src/main/kotlin/sample/
+/docs/
