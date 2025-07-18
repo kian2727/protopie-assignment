@@ -7,5 +7,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureRouting()
+    val userRepository = UserRepositoryImpl()
+    val userService = UserServiceImpl(userRepository)
+    configureRouting(userService)
 }
