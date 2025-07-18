@@ -18,10 +18,10 @@ repositories {
 dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
+    implementation(libs.bundles.exposed)
 
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.jdbc)
-    implementation(libs.h2)
+    implementation(libs.hikaricp)
+    implementation(libs.postgresql)
 
     implementation(libs.logback.classic)
 

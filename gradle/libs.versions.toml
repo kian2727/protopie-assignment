@@ -5,6 +5,7 @@ exposed = "0.41.1"
 h2 = "2.1.214"
 koin = "3.4.0"
 logback = "1.4.11"
+hikaricp = "5.0.1"
 
 [libraries]
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
@@ -18,10 +19,13 @@ ktor-server-config-yaml = { group = "io.ktor", name = "ktor-server-config-yaml",
 ktor-server-test-host = { group = "io.ktor", name = "ktor-server-test-host", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
+postgresql = {group = "org.postgresql", name = "postgresql", version = "42.7.3"}
+
 exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { group = "org.jetbrains.exposed", name = "exposed-java-time", version.ref = "exposed" }
 
-h2 = { group = "com.h2database", name = "h2", version.ref = "h2" }
+hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }  # HikariCP 추가
 
 koin-ktor = { group = "io.insert-koin", name = "koin-ktor", version.ref = "koin" }
 koin-logger-slf4j = { group = "io.insert-koin", name = "koin-logger-slf4j", version.ref = "koin" }
@@ -33,6 +37,7 @@ kotlin-test-junit = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit"
 [bundles]
 ktor = ["ktor-server-core","ktor-server-openapi","ktor-server-swagger","ktor-server-auth","ktor-server-auth-jwt","ktor-server-content-negotiation","ktor-serialization-kotlinx-json","ktor-server-netty","ktor-server-config-yaml"]
 koin = ["koin-ktor", "koin-logger-slf4j"]
+exposed = ["exposed-core","exposed-jdbc","exposed-java-time"]
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
