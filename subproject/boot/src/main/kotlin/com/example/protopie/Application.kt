@@ -1,8 +1,7 @@
 package com.example.protopie
 
-import com.zaxxer.hikari.HikariDataSource
+import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.*
-import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -10,15 +9,11 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
 
-    val hikaricpDatabase: HikariDataSource = HikariDataSource().apply {
-        jdbcUrl = "jdbc:postgresql://localhost:5432/postgres"
-        username = "postgres"
-        password = "postgres"
-    }
+    val config = ConfigFactory.load()
+    configureDatabase(config)
 
-    val connection = Database.connect(hikaricpDatabase)
-
-    val userRepository = UserRepositoryImpl(connection)
+    val userRepository = UserRepositoryImpl()
     val userService = UserServiceImpl(userRepository)
+
     configureRouting(userService)
 }
