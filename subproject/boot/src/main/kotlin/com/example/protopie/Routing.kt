@@ -17,10 +17,14 @@ fun Application.configureRouting(userService:UserService) {
         }
 
         post("/signup") {
-            val request = call.receive<SignUpRequest>()
-            userService.signup(request.email, request.username, request.password)
+            try {
+                val request = call.receive<SignUpRequest>()
+                userService.signup(request.email, request.username, request.password)
+                call.respond(HttpStatusCode.NoContent)
+            } catch (e:AlreadyExistedException){
+                call.respond(HttpStatusCode.Conflict,"이미 이메일이 존재합니다.[ email =${e.value} ]")
+            }
 
-            call.respond(HttpStatusCode.NoContent)
         }
     }
 }

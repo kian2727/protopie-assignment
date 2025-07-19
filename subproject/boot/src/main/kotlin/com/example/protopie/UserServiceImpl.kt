@@ -5,7 +5,10 @@ class UserServiceImpl(
 ):UserService {
 
     override fun signup(email: String, username: String, password: String) {
-        // TODO email validation check
+        if (usersRepository.findByEmail(email) != null) {
+            throw AlreadyExistedException(email)
+        }
+
         usersRepository.create(
             email,
             username,

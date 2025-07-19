@@ -1,19 +1,35 @@
 package com.example.protopie
 
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepositoryImpl: UserRepository {
 
     override fun create(email: String, username: String, password: String):String {
-        val test = transaction {
+        val userId = transaction {
             UserEntity.insert {
                 it[UserEntity.email] = email
                 it[UserEntity.username] = username
                 it[UserEntity.password] = password
-            }[UserEntity.id]
+            }[UserEntity.id].toString()
         }
 
-        return test.toString()
+        return userId
+    }
+
+    override fun findByEmail(email: String): User? = transaction {
+        UserEntity.select {
+            UserEntity.email eq email
+        }.map {
+            User(
+                id = it[UserEntity.id].toString(),
+                email = it[UserEntity.email].toString(),
+                username = it[UserEntity.username].toString(),
+                deletedAt = it[UserEntity.deletedAt],
+                createdAt = it[UserEntity.createdAt],
+                updatedAt = it[UserEntity.updatedAt],
+            )
+        }.singleOrNull()
     }
 }

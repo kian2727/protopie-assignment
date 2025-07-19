@@ -7,6 +7,7 @@ logback = "1.4.11"
 hikaricp = "5.0.1"
 kotest = "5.8.0"
 testContainer = "1.19.6"
+argon2 = "2.11"
 
 [libraries]
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
@@ -44,6 +45,9 @@ kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine
 
 test-container-testcontainers = { module = "org.testcontainers:testcontainers" , version.ref = "testContainer"}
 test-container-postgresql = { module = "org.testcontainers:postgresql" , version.ref = "testContainer"}
+
+argon2-jvm = {group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2"}
+
 
 [bundles]
 ktor = ["ktor-server-core","ktor-server-openapi","ktor-server-swagger","ktor-server-auth","ktor-server-auth-jwt","ktor-server-content-negotiation","ktor-serialization-kotlinx-json","ktor-server-netty","ktor-server-config-yaml"]
