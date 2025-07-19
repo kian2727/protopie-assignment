@@ -15,6 +15,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
+import kotlinx.serialization.json.Json
 
 fun Application.configureRouting(
     healthService: HealthService,
@@ -22,7 +23,15 @@ fun Application.configureRouting(
 ) {
     routing {
         install(ContentNegotiation){
-            json()
+            json(
+                Json {
+                    encodeDefaults = true
+                    ignoreUnknownKeys = true
+                    prettyPrint = true
+                    isLenient = true
+                    explicitNulls = false
+                }
+            )
         }
 
         fun String.toRoleUser():User.UserRole = when(this){

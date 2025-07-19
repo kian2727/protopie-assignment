@@ -12,7 +12,7 @@ data class UserResponse(
     val username:String,
     val role: UserRole,
     val isActive:Boolean,
-    val deletedAt: String?,
+    val deletedAt: String? = null,
     val createdAt: String,
     val updatedAt: String
 ){

@@ -6,5 +6,5 @@ interface UserRepository {
     fun findByEmail(email: String): User?
     fun findPassword(email: String): User?
     fun findById(id: String): User?
-    fun update(user: User):User?
+    fun update(user: User):User
 }

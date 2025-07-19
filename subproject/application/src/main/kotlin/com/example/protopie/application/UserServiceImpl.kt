@@ -34,11 +34,17 @@ class UserServiceImpl(
         }
     }
 
+    override fun updateUser(command: UserService.UpdateUserCommand):User {
+        val user =  usersRepository.findById(command.userId) ?: throw NotFoundUserException()
+        val toUpdateUser = user.toUpdate(command.email, command.password, command.username, command.role)
+        return usersRepository.update(toUpdateUser)
+    }
+
     override fun getUser(userId: String): User = usersRepository.findById(userId) ?: throw NotFoundUserException()
 
     override fun delete(userId: String) {
         val user = usersRepository.findById(userId) ?: throw NotFoundUserException()
-        val userToUpdate = user.toDelete()
-        usersRepository.update(userToUpdate)
+        val userToDelete = user.toDelete()
+        usersRepository.update(userToDelete)
     }
 }

@@ -6,6 +6,7 @@ import com.example.protopie.domain.PasswordUtil
 import com.example.protopie.domain.jwt.TokenConfiguration
 import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.example.protopie.infrastructure.UserEntity
+import com.example.protopie.presentation.dto.UpdateUserRequest
 import com.example.protopie.presentation.dto.UserResponse
 import io.kotest.core.spec.style.FreeSpec
 import io.ktor.client.call.*
@@ -102,6 +103,89 @@ class UserHttpTest:FreeSpec({
 
                         assertEquals(HttpStatusCode.Forbidden, deleteResponse.status)
 
+                    }
+                }
+            }
+        }
+        "유저 수정 테스트" - {
+            var existedUserId = ""
+            runCustomTestApplication(databaseConfiguration) {
+
+                val existedEmail = generateEmail()
+                val existedPassword = UUID.randomUUID().toString()
+
+                existedUserId = transaction{
+                    UserEntity.insert {
+                        it[email] = existedEmail
+                        it[username] = "testUsername"
+                        it[password] = PasswordUtil.hashPassword(existedPassword)
+                        it[role] = "USER"
+                    }
+
+                    UserEntity.select(
+                        UserEntity.email eq existedEmail
+                    ).map { it[UserEntity.id].toString() }.single()
+                }
+            }
+
+            val accessToken = generateAccessToken(tokenConfiguration, existedUserId)
+
+            "성공 케이스" - {
+                "전체 수정" {
+                    runCustomTestApplication(databaseConfiguration) {
+                        val toUpdateEmail = generateEmail()
+                        val toUpdateUsername = UUID.randomUUID().toString()
+
+                        val updatedResponse = client.put("/users/$existedUserId") {
+                            header("Authorization", "Bearer $accessToken")
+                            contentType(ContentType.Application.Json)
+                            setBody(
+                                UpdateUserRequest(
+                                    email = toUpdateEmail,
+                                    username = toUpdateUsername,
+                                    role = "USER"
+                                )
+                            )
+                        }
+
+                        assertEquals(HttpStatusCode.OK, updatedResponse.status)
+                        assertEquals(toUpdateEmail , updatedResponse.body<UserResponse>().email)
+                        assertEquals(toUpdateUsername, updatedResponse.body<UserResponse>().username)
+                    }
+                }
+                "일부(username) 수정" {
+                    runCustomTestApplication(databaseConfiguration) {
+                        val toUpdateUsername = UUID.randomUUID().toString()
+
+                        val updatedResponse = client.put("/users/$existedUserId") {
+                            header("Authorization", "Bearer $accessToken")
+                            contentType(ContentType.Application.Json)
+                            setBody(
+                                UpdateUserRequest(
+                                    username = toUpdateUsername,
+                                )
+                            )
+                        }
+
+                        assertEquals(HttpStatusCode.OK, updatedResponse.status)
+                        assertEquals(toUpdateUsername, updatedResponse.body<UserResponse>().username)
+                    }
+                }
+            }
+            "실패 케이스" - {
+                "잘못된 유저 Role을 요청한 경우"{
+                    runCustomTestApplication(databaseConfiguration) {
+                        val updatedResponse = client.put("/users/$existedUserId") {
+                            header("Authorization", "Bearer $accessToken")
+                            contentType(ContentType.Application.Json)
+                            setBody(
+                                UpdateUserRequest(
+                                    role = "non-existed-role",
+                                )
+                            )
+                        }
+
+                        assertEquals(HttpStatusCode.BadRequest, updatedResponse.status)
                     }
                 }
             }

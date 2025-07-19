@@ -23,4 +23,16 @@ data class User(
         deletedAt = LocalDateTime.now(),
         updatedAt = LocalDateTime.now(),
         isActive = false)
+
+    fun toUpdate(
+        email:String?,
+        password:String?,
+        username:String?,
+        role:UserRole?,
+    ) = this.copy(
+        email = email?:this.email ,
+        password = password?:this.password,
+        username = username?:this.username,
+        role = role?:this.role,
+    )
 }
