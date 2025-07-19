@@ -2,12 +2,9 @@ package com.example.protopie.infrastructure
 
 import com.example.protopie.domain.User
 import com.example.protopie.domain.UserRepository
-import org.jetbrains.exposed.sql.Query
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import java.util.*
 
 class UserRepositoryImpl: UserRepository {
@@ -23,6 +20,17 @@ class UserRepositoryImpl: UserRepository {
         }
 
         return userId
+    }
+
+    override fun findAllCount(): Int = transaction {
+        UserEntity.selectAll().count().toInt()
+    }
+
+    override fun findAll(size: Int, offset: Int): List<User> = transaction {
+        UserEntity.selectAll()
+            .limit(size, offset.toLong())
+            .orderBy(UserEntity.createdAt, SortOrder.DESC)
+            .toUserDomain()
     }
 
     override fun findByEmail(email: String): User? = transaction {

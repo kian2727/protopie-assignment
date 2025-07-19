@@ -4,6 +4,7 @@ import com.example.protopie.domain.PasswordUtil
 import com.example.protopie.domain.User
 import com.example.protopie.domain.jwt.TokenProvider
 import com.example.protopie.domain.UserRepository
+import com.example.protopie.domain.exception.AuthorizationFailedException
 import com.example.protopie.domain.exception.CustomException
 import com.example.protopie.domain.exception.NotFoundUserException
 
@@ -32,6 +33,20 @@ class UserServiceImpl(
         } else {
             throw NotFoundUserException()
         }
+    }
+
+    override fun getUsersAll(command: UserService.GetUsersAllCommand): UserService.GetUsersAllResult {
+        val user = usersRepository.findById(command.userId) ?: throw NotFoundUserException()
+        if( user.role != User.UserRole.ADMIN ){
+            throw AuthorizationFailedException()
+        }
+
+        val totalCount = usersRepository.findAllCount()
+        val size = command.size
+        val offset = (command.page - 1) * size
+        val usersList = usersRepository.findAll(size, offset)
+
+        return UserService.GetUsersAllResult(command.page, size, totalCount, usersList)
     }
 
     override fun updateUser(command: UserService.UpdateUserCommand):User {
