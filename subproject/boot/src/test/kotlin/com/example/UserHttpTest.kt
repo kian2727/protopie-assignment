@@ -6,8 +6,7 @@ import com.example.protopie.domain.PasswordUtil
 import com.example.protopie.domain.jwt.TokenConfiguration
 import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.example.protopie.infrastructure.UserEntity
-import com.example.protopie.presentation.dto.SignInRequest
-import com.example.protopie.presentation.dto.SignInResponse
+import com.example.protopie.presentation.dto.UserResponse
 import io.kotest.core.spec.style.FreeSpec
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -42,6 +41,68 @@ class UserHttpTest:FreeSpec({
                         header("Authorization", "Bearer $accessToken")
                     }
                     assertEquals(HttpStatusCode.Unauthorized, response.status)
+                }
+            }
+        }
+        "유저 조회 테스트" - {
+            "성공 케이스" {
+                runCustomTestApplication(databaseConfiguration) {
+
+                    val existedEmail = generateEmail()
+                    val existedPassword = UUID.randomUUID().toString()
+
+                    val existedUserId = transaction{
+                        UserEntity.insert {
+                            it[email] = existedEmail
+                            it[username] = "testUsername"
+                            it[password] = PasswordUtil.hashPassword(existedPassword)
+                            it[role] = "USER"
+                        }
+
+                        UserEntity.select(
+                            UserEntity.email eq existedEmail
+                        ).map { it[UserEntity.id].toString() }.single()
+                    }
+
+                    val accessToken = generateAccessToken(tokenConfiguration, existedUserId)
+
+                    val getResponse = client.get("/users/$existedUserId") {
+                        header("Authorization", "Bearer $accessToken")
+                    }
+                    assertEquals(HttpStatusCode.OK, getResponse.status)
+                    assertEquals(existedUserId, getResponse.body<UserResponse>().id)
+
+                }
+            }
+            "실패 케이스" - {
+                "로그인한 유저와 path parameter UserId가 다른경우"{
+                    runCustomTestApplication(databaseConfiguration) {
+
+                        val existedEmail = generateEmail()
+                        val existedPassword = UUID.randomUUID().toString()
+
+                        val existedUserId = transaction{
+                            UserEntity.insert {
+                                it[email] = existedEmail
+                                it[username] = "testUsername"
+                                it[password] = PasswordUtil.hashPassword(existedPassword)
+                                it[role] = "USER"
+                            }
+
+                            UserEntity.select(
+                                UserEntity.email eq existedEmail
+                            ).map { it[UserEntity.id].toString() }.single()
+                        }
+
+                        val accessToken = generateAccessToken(tokenConfiguration, existedUserId)
+
+                        val deleteResponse = client.get("/users/non-userId") {
+                            header("Authorization", "Bearer $accessToken")
+                        }
+
+                        assertEquals(HttpStatusCode.Forbidden, deleteResponse.status)
+
+                    }
                 }
             }
         }

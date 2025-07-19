@@ -11,8 +11,6 @@ import com.example.protopie.presentation.dto.SignUpRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -28,8 +26,8 @@ fun Application.configureRouting(
         }
 
         fun String.toRoleUser():User.UserRole = when(this){
-            "user" -> User.UserRole.USER
-            "admin" -> User.UserRole.ADMIN
+            "USER" -> User.UserRole.USER
+            "ADMIN" -> User.UserRole.ADMIN
             else -> throw IllegalArgumentException("Invalid role")
         }
 
@@ -56,19 +54,7 @@ fun Application.configureRouting(
                 call.respond(HttpStatusCode.NotFound, "유저를 찾을 수 없습니다.")
             }
         }
-
-        authenticate("jwtAuth") {
-            delete("/users/{userId}") {
-                val userId = call.request.pathVariables["userId"] ?: return@delete call.respond(HttpStatusCode.BadRequest, "userId 를 찾을수 없습니다.")
-                val principal = call.principal<JWTPrincipal>()
-                val principalUserId = principal?.payload?.getClaim("userId")?.asString()
-                if(userId == principalUserId){
-                    userService.delete(userId)
-                    call.respond(HttpStatusCode.NoContent)
-                } else {
-                    call.respond(HttpStatusCode.Forbidden, "You can't delete this user")
-                }
-            }
-        }
     }
+
+    authRouting(userService = userService)
 }
