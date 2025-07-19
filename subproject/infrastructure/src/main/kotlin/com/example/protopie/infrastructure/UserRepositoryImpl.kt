@@ -35,11 +35,20 @@ class UserRepositoryImpl: UserRepository {
         }.singleOrNull()
     }
 
-    override fun findPassword(email: String): String? = transaction{
+    override fun findPassword(email: String): Pair<User,String>? = transaction{
         UserEntity.select {
             UserEntity.email eq email
         }.map {
-            it[UserEntity.password]
+            Pair(
+                User(
+                    id = it[UserEntity.id].toString(),
+                    email = it[UserEntity.email].toString(),
+                    username = it[UserEntity.username].toString(),
+                    deletedAt = it[UserEntity.deletedAt],
+                    createdAt = it[UserEntity.createdAt],
+                    updatedAt = it[UserEntity.updatedAt],
+                ) , it[UserEntity.password].toString()
+            )
         }.singleOrNull()
     }
 }

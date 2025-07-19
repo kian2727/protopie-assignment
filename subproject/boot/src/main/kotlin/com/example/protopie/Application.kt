@@ -2,6 +2,8 @@ package com.example.protopie
 
 import com.example.protopie.application.HealthServiceImpl
 import com.example.protopie.application.UserServiceImpl
+import com.example.protopie.domain.jwt.TokenConfiguration
+import com.example.protopie.domain.jwt.TokenProvider
 import com.example.protopie.infrastructure.ConnectExposedSetting
 import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.example.protopie.infrastructure.HealthRepositoryImpl
@@ -24,7 +26,9 @@ fun Application.module(databaseConfiguration: DatabaseConfiguration? = null) {
     val healthService = HealthServiceImpl(healthRepository)
 
     val userRepository = UserRepositoryImpl()
-    val userService = UserServiceImpl(userRepository)
+    val tokenProvider = TokenProvider(TokenConfiguration.loadConfiguration(config))
+
+    val userService = UserServiceImpl(userRepository, tokenProvider)
 
     configureRouting(healthService, userService)
 }
