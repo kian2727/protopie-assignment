@@ -7,6 +7,7 @@ import com.example.protopie.infrastructure.UserEntity
 import com.example.protopie.presentation.dto.SignInRequest
 import io.kotest.core.spec.style.FreeSpec
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import junit.framework.TestCase.assertEquals
 import org.jetbrains.exposed.sql.deleteAll
@@ -37,6 +38,7 @@ class SignInHttpTest:FreeSpec( {
                         it[email] = existedEmail
                         it[username] = "testUsername"
                         it[password] = PasswordUtil.hashPassword(existedPassword)
+                        it[role] = "USER"
                     }
                 }
 
@@ -78,6 +80,7 @@ class SignInHttpTest:FreeSpec( {
                             it[email] = existedEmail
                             it[username] = "testUsername"
                             it[password] = PasswordUtil.hashPassword(existedPassword)
+                            it[role] = "USER"
                         }
                     }
                     val response = client.post("/signin") {
@@ -95,7 +98,28 @@ class SignInHttpTest:FreeSpec( {
                 }
             }
             "이메일과 패스워드는 일치하나, 탈퇴한 유저인 경우" {
-                TODO("탈퇴 로직 구현이후")
+                runCustomTestApplication(databaseConfiguration){
+                    transaction{
+                        UserEntity.insert {
+                            it[email] = existedEmail
+                            it[username] = "testUsername"
+                            it[password] = PasswordUtil.hashPassword(existedPassword)
+                            it[role] = "USER"
+                            it[isActive] = false
+                        }
+                    }
+                    val response = client.post("/signin") {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            SignInRequest(
+                                email = existedEmail ,
+                                password = PasswordUtil.hashPassword(existedPassword)
+                            )
+                        )
+                    }
+
+                    assertEquals(HttpStatusCode.NotFound, response.status)
+                }
             }
         }
     }

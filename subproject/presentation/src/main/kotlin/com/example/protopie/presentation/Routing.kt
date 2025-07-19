@@ -2,6 +2,7 @@ package com.example.protopie.presentation
 
 import com.example.protopie.application.HealthService
 import com.example.protopie.application.UserService
+import com.example.protopie.domain.User
 import com.example.protopie.domain.exception.CustomException
 import com.example.protopie.domain.exception.NotFoundUserException
 import com.example.protopie.presentation.dto.SignInRequest
@@ -10,6 +11,8 @@ import com.example.protopie.presentation.dto.SignUpRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -20,9 +23,14 @@ fun Application.configureRouting(
     userService: UserService,
 ) {
     routing {
-
         install(ContentNegotiation){
             json()
+        }
+
+        fun String.toRoleUser():User.UserRole = when(this){
+            "user" -> User.UserRole.USER
+            "admin" -> User.UserRole.ADMIN
+            else -> throw IllegalArgumentException("Invalid role")
         }
 
         get("/health"){
@@ -32,7 +40,7 @@ fun Application.configureRouting(
         post("/signup") {
             try {
                 val request = call.receive<SignUpRequest>()
-                userService.signup(request.email, request.username, request.password)
+                userService.signup(request.email, request.username, request.password, request.role?.toRoleUser())
                 call.respond(HttpStatusCode.NoContent)
             } catch (e: CustomException){
                 call.respond(HttpStatusCode.Conflict,"이미 이메일이 존재합니다.[ email =${e.value} ]")

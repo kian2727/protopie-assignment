@@ -26,6 +26,7 @@ class SignUpHttpTest:FreeSpec ({
                         TestDataHelper.generateEmail(),
                         "testUsername",
                         "password",
+                        null
                     )
 
                     setBody(request)
@@ -42,6 +43,7 @@ class SignUpHttpTest:FreeSpec ({
                             it[email] = existedEmail
                             it[username] = "testUsername"
                             it[password] = "<PASSWORD>"
+                            it[role] = "USER"
                         }
                     }
 
