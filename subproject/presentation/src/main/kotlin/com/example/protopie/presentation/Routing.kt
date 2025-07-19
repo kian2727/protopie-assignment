@@ -51,10 +51,23 @@ fun Application.configureRouting(
             try {
                 val request = call.receive<SignInRequest>()
                 val accessToken = userService.signIn(request.email, request.password)
-                println("#### access token = $accessToken")
                 call.respond(HttpStatusCode.OK, SignInResponse(accessToken))
             } catch (e: NotFoundUserException){
                 call.respond(HttpStatusCode.NotFound, "유저를 찾을 수 없습니다.")
+            }
+        }
+
+        authenticate("jwtAuth") {
+            delete("/users/{userId}") {
+                val userId = call.request.pathVariables["userId"] ?: return@delete call.respond(HttpStatusCode.BadRequest, "userId 를 찾을수 없습니다.")
+                val principal = call.principal<JWTPrincipal>()
+                val principalUserId = principal?.payload?.getClaim("userId")?.asString()
+                if(userId == principalUserId){
+                    userService.delete(userId)
+                    call.respond(HttpStatusCode.NoContent)
+                } else {
+                    call.respond(HttpStatusCode.Forbidden, "You can't delete this user")
+                }
             }
         }
     }

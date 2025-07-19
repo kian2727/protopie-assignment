@@ -37,10 +37,22 @@ class UserRepositoryImpl: UserRepository {
         }.toUserDomain().singleOrNull()
     }
 
+    override fun findById(id: String): User? = transaction {
+        UserEntity.select(
+            UserEntity.id eq UUID.fromString(id)
+        ).toUserDomain().singleOrNull()
+    }
+
     override fun update(user: User): User = transaction{
         val userIdUUid = UUID.fromString(user.id)
         UserEntity.update({ UserEntity.id eq userIdUUid }) {
+            it[password] = user.password
+            it[email] = user.email
             it[username] = user.username
+            it[role] = user.role.toString()
+            it[isActive] = user.isActive
+            it[deletedAt] = user.deletedAt
+            it[updatedAt] = user.updatedAt
         }
 
         UserEntity.select(UserEntity.id eq userIdUUid ).toUserDomain().single()

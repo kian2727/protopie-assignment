@@ -11,6 +11,7 @@ import com.example.protopie.infrastructure.UserRepositoryImpl
 import com.example.protopie.presentation.configureRouting
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import configAuth
 import io.ktor.server.application.*
 
 fun main(args: Array<String> = emptyArray()) {
@@ -26,9 +27,11 @@ fun Application.module(databaseConfiguration: DatabaseConfiguration? = null) {
     val healthService = HealthServiceImpl(healthRepository)
 
     val userRepository = UserRepositoryImpl()
-    val tokenProvider = TokenProvider(TokenConfiguration.loadConfiguration(config))
+    val tokenConfiguration = TokenConfiguration.loadConfiguration(config)
+    val tokenProvider = TokenProvider(tokenConfiguration)
 
     val userService = UserServiceImpl(userRepository, tokenProvider)
 
+    configAuth(tokenConfiguration)
     configureRouting(healthService, userService)
 }

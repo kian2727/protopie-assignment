@@ -18,4 +18,9 @@ data class User(
         ADMIN,
         USER
     }
+
+    fun toDelete() = this.copy(
+        deletedAt = LocalDateTime.now(),
+        updatedAt = LocalDateTime.now(),
+        isActive = false)
 }

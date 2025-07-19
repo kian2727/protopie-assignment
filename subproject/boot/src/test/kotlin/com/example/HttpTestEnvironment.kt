@@ -1,5 +1,6 @@
 package com.example
 
+import com.example.protopie.domain.jwt.TokenConfiguration
 import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.typesafe.config.ConfigFactory
 import org.testcontainers.containers.PostgreSQLContainer
@@ -8,6 +9,8 @@ class HttpTestEnvironment : AutoCloseable {
 
     private val postgreSQLContainer:PostgreSQLContainer<*>
     val databaseConfiguration: DatabaseConfiguration
+    val tokenConfiguration:TokenConfiguration
+
     companion object{
         private const val INIT_SCRIPT = "create-tables.sql"
         val global = HttpTestEnvironment()
@@ -29,6 +32,8 @@ class HttpTestEnvironment : AutoCloseable {
 
         val exposedPort = postgreSQLContainer.getMappedPort(originalPort)
         databaseConfiguration = DatabaseConfiguration.loadConfiguration(config).copy(port = exposedPort)
+        tokenConfiguration = TokenConfiguration.loadConfiguration(config)
+
     }
 
     override fun close() {
