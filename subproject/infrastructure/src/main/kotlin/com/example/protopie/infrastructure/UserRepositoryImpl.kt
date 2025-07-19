@@ -4,6 +4,7 @@ import com.example.protopie.domain.User
 import com.example.protopie.domain.UserRepository
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepositoryImpl: UserRepository {
 
@@ -19,7 +20,7 @@ class UserRepositoryImpl: UserRepository {
         return userId
     }
 
-    override fun findByEmail(email: String): User? = org.jetbrains.exposed.sql.transactions.transaction {
+    override fun findByEmail(email: String): User? = transaction {
         UserEntity.select {
             UserEntity.email eq email
         }.map {
@@ -31,6 +32,14 @@ class UserRepositoryImpl: UserRepository {
                 createdAt = it[UserEntity.createdAt],
                 updatedAt = it[UserEntity.updatedAt],
             )
+        }.singleOrNull()
+    }
+
+    override fun findPassword(email: String): String? = transaction{
+        UserEntity.select {
+            UserEntity.email eq email
+        }.map {
+            it[UserEntity.password]
         }.singleOrNull()
     }
 }

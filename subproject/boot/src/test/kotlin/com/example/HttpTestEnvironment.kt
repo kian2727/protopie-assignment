@@ -22,6 +22,7 @@ class HttpTestEnvironment : AutoCloseable {
             .withUsername(config.getString("database.postgresql.username"))
             .withPassword(config.getString("database.postgresql.password"))
             .withInitScript(INIT_SCRIPT)
+
         if( postgreSQLContainer.isRunning.not() ) {
             postgreSQLContainer.start()
         }

@@ -2,7 +2,10 @@ package com.example.protopie.presentation
 
 import com.example.protopie.application.HealthService
 import com.example.protopie.application.UserService
-import com.example.protopie.domain.exception.AlreadyExistedException
+import com.example.protopie.domain.exception.CustomException
+import com.example.protopie.domain.exception.NotFoundUserException
+import com.example.protopie.presentation.dto.SignInRequest
+import com.example.protopie.presentation.dto.SignInResponse
 import com.example.protopie.presentation.dto.SignUpRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -31,10 +34,19 @@ fun Application.configureRouting(
                 val request = call.receive<SignUpRequest>()
                 userService.signup(request.email, request.username, request.password)
                 call.respond(HttpStatusCode.NoContent)
-            } catch (e: AlreadyExistedException){
+            } catch (e: CustomException){
                 call.respond(HttpStatusCode.Conflict,"이미 이메일이 존재합니다.[ email =${e.value} ]")
             }
+        }
 
+        post("/signin") {
+            try {
+                val request = call.receive<SignInRequest>()
+                val accessToken = userService.signIn(request.email, request.password)
+                call.respond(HttpStatusCode.OK, SignInResponse(accessToken))
+            } catch (e: NotFoundUserException){
+                call.respond(HttpStatusCode.NotFound, "유저를 찾을 수 없습니다.")
+            }
         }
     }
 }
