@@ -1,21 +1,18 @@
 plugins {
-    kotlin("jvm")
-}
-
-group = "com.example"
-version = "0.0.1"
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
+    implementation(project(":subproject:domain"))
+    implementation(project(":subproject:application"))
+    implementation(libs.bundles.ktor)
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
+    testImplementation(libs.ktor.server.test.host)
+    testImplementation(libs.ktor.client.content.negotiation)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.bundles.testcontainers)
+
 }

@@ -1,4 +1,4 @@
-package com.example.protopie
+package com.example.protopie.infrastructure
 
 import com.typesafe.config.Config
 
@@ -10,7 +10,7 @@ data class DatabaseConfiguration(
     val password: String
 ){
     companion object{
-        fun loadConfiguration(config:Config):DatabaseConfiguration=
+        fun loadConfiguration(config: Config): DatabaseConfiguration =
             DatabaseConfiguration(
                 host = config.getString("database.postgresql.host"),
                 port = config.getInt("database.postgresql.port"),

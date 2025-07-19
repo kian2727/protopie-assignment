@@ -1,13 +1,14 @@
-package com.example.protopie
+package com.example.protopie.infrastructure
 
+import com.example.protopie.domain.User
+import com.example.protopie.domain.UserRepository
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserRepositoryImpl: UserRepository {
 
     override fun create(email: String, username: String, password: String):String {
-        val userId = transaction {
+        val userId = org.jetbrains.exposed.sql.transactions.transaction {
             UserEntity.insert {
                 it[UserEntity.email] = email
                 it[UserEntity.username] = username
@@ -18,7 +19,7 @@ class UserRepositoryImpl: UserRepository {
         return userId
     }
 
-    override fun findByEmail(email: String): User? = transaction {
+    override fun findByEmail(email: String): User? = org.jetbrains.exposed.sql.transactions.transaction {
         UserEntity.select {
             UserEntity.email eq email
         }.map {

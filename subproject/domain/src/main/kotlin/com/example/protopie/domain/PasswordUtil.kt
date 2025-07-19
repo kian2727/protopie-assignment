@@ -1,4 +1,4 @@
-package com.example.protopie
+package com.example.protopie.domain
 
 import de.mkammerer.argon2.Argon2Factory
 

@@ -1,7 +1,7 @@
 package com.example
-import com.example.protopie.DatabaseConfiguration
-import com.example.protopie.UserEntity
-import com.example.protopie.dto.SignUpRequest
+import com.example.protopie.infrastructure.DatabaseConfiguration
+import com.example.protopie.infrastructure.UserEntity
+import com.example.protopie.presentation.dto.SignUpRequest
 import io.kotest.core.spec.style.FreeSpec
 import io.ktor.client.request.*
 import io.ktor.http.*

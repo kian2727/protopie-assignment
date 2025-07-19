@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.protopie.DatabaseConfiguration
+import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.example.protopie.module
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*

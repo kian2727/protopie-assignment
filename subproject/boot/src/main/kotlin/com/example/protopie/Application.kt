@@ -1,5 +1,9 @@
 package com.example.protopie
 
+import com.example.protopie.application.UserServiceImpl
+import com.example.protopie.infrastructure.DatabaseConfiguration
+import com.example.protopie.infrastructure.UserRepositoryImpl
+import com.example.protopie.presentation.configureRouting
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import com.zaxxer.hikari.HikariDataSource
@@ -10,10 +14,10 @@ fun main(args: Array<String> = emptyArray()) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-fun Application.module(databaseConfiguration:DatabaseConfiguration? = null) {
+fun Application.module(databaseConfiguration: DatabaseConfiguration? = null) {
 
     val config: Config = ConfigFactory.load()
-    val databaseConfiguration = databaseConfiguration?:DatabaseConfiguration.loadConfiguration(config)
+    val databaseConfiguration = databaseConfiguration?: DatabaseConfiguration.loadConfiguration(config)
 
     val hikaricpDatabase: HikariDataSource = HikariDataSource().apply {
         jdbcUrl = databaseConfiguration.jdbcUrl

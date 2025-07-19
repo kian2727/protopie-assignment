@@ -1,9 +1,8 @@
-package com.example.protopie
+package com.example.protopie.infrastructure
 
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 
-object UserEntity: Table("users") {
+object UserEntity: org.jetbrains.exposed.sql.Table("users") {
     val id = uuid("id").clientDefault { java.util.UUID.randomUUID() }
     val email = varchar("email", 255).uniqueIndex()
     val username = varchar("username", 255)

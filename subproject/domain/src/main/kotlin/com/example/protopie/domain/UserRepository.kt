@@ -1,4 +1,4 @@
-package com.example.protopie
+package com.example.protopie.domain
 
 interface UserRepository {
 

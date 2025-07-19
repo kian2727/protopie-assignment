@@ -1,13 +1,13 @@
 package com.example
 
-import com.example.protopie.DatabaseConfiguration
+import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.typesafe.config.ConfigFactory
 import org.testcontainers.containers.PostgreSQLContainer
 
 class HttpTestEnvironment : AutoCloseable {
 
     private val postgreSQLContainer:PostgreSQLContainer<*>
-    val databaseConfiguration:DatabaseConfiguration
+    val databaseConfiguration: DatabaseConfiguration
     companion object{
         private const val INIT_SCRIPT = "create-tables.sql"
         val global = HttpTestEnvironment()

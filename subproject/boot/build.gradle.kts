@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.example"
@@ -11,11 +10,12 @@ application {
     mainClass = "io.ktor.server.netty.EngineMain"
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
+    implementation(project(":subproject:presentation"))
+    implementation(project(":subproject:application"))
+    implementation(project(":subproject:domain"))
+    implementation(project(":subproject:infrastructure"))
+
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.exposed)
@@ -25,7 +25,10 @@ dependencies {
 
     implementation(libs.logback.classic)
 
-    implementation(libs.argon2.jvm)
+    testImplementation(project(":subproject:presentation"))
+    testImplementation(project(":subproject:application"))
+    testImplementation(project(":subproject:domain"))
+    testImplementation(project(":subproject:infrastructure"))
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)

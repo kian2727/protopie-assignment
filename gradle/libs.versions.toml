@@ -8,6 +8,7 @@ hikaricp = "5.0.1"
 kotest = "5.8.0"
 testContainer = "1.19.6"
 argon2 = "2.11"
+config = "1.4.1"
 
 [libraries]
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
@@ -48,6 +49,7 @@ test-container-postgresql = { module = "org.testcontainers:postgresql" , version
 
 argon2-jvm = {group = "de.mkammerer", name = "argon2-jvm", version.ref = "argon2"}
 
+config = {group="com.typesafe", name = "config", version.ref = "config"}
 
 [bundles]
 ktor = ["ktor-server-core","ktor-server-openapi","ktor-server-swagger","ktor-server-auth","ktor-server-auth-jwt","ktor-server-content-negotiation","ktor-serialization-kotlinx-json","ktor-server-netty","ktor-server-config-yaml"]
