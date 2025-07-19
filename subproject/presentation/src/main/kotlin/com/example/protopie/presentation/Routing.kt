@@ -1,5 +1,6 @@
 package com.example.protopie.presentation
 
+import com.example.protopie.application.HealthService
 import com.example.protopie.application.UserService
 import com.example.protopie.domain.exception.AlreadyExistedException
 import com.example.protopie.presentation.dto.SignUpRequest
@@ -11,11 +12,18 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 
-fun Application.configureRouting(userService: UserService) {
+fun Application.configureRouting(
+    healthService: HealthService,
+    userService: UserService,
+) {
     routing {
 
         install(ContentNegotiation){
             json()
+        }
+
+        get("/health"){
+            healthService.check()
         }
 
         post("/signup") {

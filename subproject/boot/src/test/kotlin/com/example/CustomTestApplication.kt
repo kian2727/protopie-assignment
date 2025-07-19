@@ -3,6 +3,8 @@ package com.example
 import com.example.protopie.infrastructure.DatabaseConfiguration
 import com.example.protopie.module
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 
@@ -14,6 +16,8 @@ fun runCustomTestApplication(databaseConfiguration: DatabaseConfiguration, block
                 json()
             }
         }
+
+        client.post("/health")
 
         block()
     }
