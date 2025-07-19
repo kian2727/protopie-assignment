@@ -25,10 +25,20 @@ dependencies {
 
     implementation(libs.logback.classic)
 
-
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.bundles.testcontainers)
+}
+
+// TestResources 관련 작업을할떄, 작업 등록
+tasks.processTestResources {
+    dependsOn("copyInitScript")
+}
+
+tasks.register<Copy>("copyInitScript") {
+    // root Path에 있는 init-script가 classpath에 포함되도록
+    from("${rootProject.projectDir}/database/create-tables.sql")
+    into("${project.buildDir}/resources/test")
 }
