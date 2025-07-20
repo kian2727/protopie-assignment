@@ -21,7 +21,7 @@ data class UpdateUserRequest(
             when(it){
                 "ADMIN" -> UserRole.ADMIN
                 "USER" -> UserRole.USER
-                else -> throw IllegalArgumentException("Invalid role")
+                else -> throw IllegalArgumentException("잘못된 사용자 권한입니다.")
             }
          },
     )

@@ -5,6 +5,7 @@ import com.example.protopie.application.UserService
 import com.example.protopie.domain.User
 import com.example.protopie.domain.exception.CustomException
 import com.example.protopie.domain.exception.NotFoundUserException
+import com.example.protopie.presentation.dto.ErrorResponse
 import com.example.protopie.presentation.dto.SignInRequest
 import com.example.protopie.presentation.dto.SignInResponse
 import com.example.protopie.presentation.dto.SignUpRequest
@@ -44,7 +45,7 @@ fun Application.configureRouting(
             if( healthService.check() ) {
                 call.respond(HttpStatusCode.OK, "OK")
             }else {
-                call.respond(HttpStatusCode.InternalServerError, "Internal Server Error")
+                call.respond(HttpStatusCode.InternalServerError, ErrorResponse("서버에 문제가 발생했습니다."))
             }
 
         }
@@ -55,7 +56,7 @@ fun Application.configureRouting(
                 userService.signup(request.email, request.username, request.password, request.role?.toRoleUser())
                 call.respond(HttpStatusCode.NoContent)
             } catch (e: CustomException){
-                call.respond(HttpStatusCode.Conflict,"이미 이메일이 존재합니다.[ email =${e.value} ]")
+                call.respond(HttpStatusCode.Conflict,ErrorResponse("이미 이메일이 존재합니다.[ email =${e.value} ]"))
             }
         }
 
@@ -65,7 +66,7 @@ fun Application.configureRouting(
                 val accessToken = userService.signIn(request.email, request.password)
                 call.respond(HttpStatusCode.OK, SignInResponse(accessToken))
             } catch (e: NotFoundUserException){
-                call.respond(HttpStatusCode.NotFound, "유저를 찾을 수 없습니다.")
+                call.respond(HttpStatusCode.NotFound, ErrorResponse("유저를 찾을 수 없습니다."))
             }
         }
     }
