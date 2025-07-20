@@ -45,3 +45,11 @@ tasks.register<Copy>("copyInitScript") {
     from("${rootProject.projectDir}/database/create-tables.sql")
     into("${project.buildDir}/resources/test")
 }
+
+tasks {
+    shadowJar {
+        archiveClassifier.set("")
+        archiveVersion.set("")
+        mergeServiceFiles()
+    }
+}

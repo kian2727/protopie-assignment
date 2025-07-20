@@ -41,7 +41,12 @@ fun Application.configureRouting(
         }
 
         get("/health"){
-            healthService.check()
+            if( healthService.check() ) {
+                call.respond(HttpStatusCode.OK, "OK")
+            }else {
+                call.respond(HttpStatusCode.InternalServerError, "Internal Server Error")
+            }
+
         }
 
         post("/signup") {
